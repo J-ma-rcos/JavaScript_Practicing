@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+  <link rel="icon" href="https://fav.farm/🔥" />
+</head>
+<body>
+<canvas id="draw" width="800" height="800"></canvas>
+<script>
+
+  //a primeira variavel seleciona o elemento do canvas pelo id e o segundo define o formato para 2d de desenho
+  const canvas = document.querySelector('#draw');
+  const ctx = canvas.getContext('2d');
+
+  //define o tamanho da janela que vai ser realizado o desenho no caso vai ser a tela inteira 
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  //definindo qual cor vai começar e qual vai ser o formato do passador/pincel no caso vai ser "arrendodado" respectivamente
+  ctx.strokeStyle = '#BADA55';
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.lineWidth =100;
+  //aqui é definido como padrão que o valor "esta desenhando" é falso para não desenhar sem que haja o click
+  let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0;
+  let hue = 0;
+  let direction = true;
+
+  function draw(e) {
+    //esse if vai fazer com que a função pare quando não houver o movimento do mouse pressionado
+    if(!isDrawing) return;
+    console.log(e);
+
+    ctx.strokeStyle = `hsl(${hue} , 100% , 50%)`;
+    ctx.beginPath();
+    //por onde vai começar
+    ctx.moveTo(lastX,lastY);
+    //para onde vai
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke()
+    //agora temos que atualizar o lastX e lastY para que ele não fique fazendo desenhos sempre apartir do ponto 0
+    lastX = e.offsetX;
+    lastY = e.offsetY; 
+    //o hue é para incrementar e ir mudando as cores a medida que ele aumenta e o if é pra limitar ate onde ele vai fazendo com que quando chegue a 360 ele retorne ao 0
+    hue++;
+    if(hue > 360){
+      hue = 0;
+    }
+    //esses dois IFs é para a mudança de tamanho fazendo com que quando o tamanho da linha fique maior que 100 ela comece a recredir e quando chegue no 1 ela aumente
+    if(ctx.lineWidth >= 100 || ctx.lineWidth <= 1){
+      direction = !direction;
+    }
+
+    if(direction){
+      ctx.lineWidth++;
+    }else{
+      ctx.lineWidth--;
+    }
+  }
+
+  //essa variavel é para definirmos que quando o mouse estiver sendo pressionado ele seja verdadeiro
+  canvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+  });
+
+  canvas.addEventListener('mousemove', draw);
+  //essas duas variaveis é para definirmos que quando o mouse estiver na tela ou fora dela o valor dele seja falso
+  canvas.addEventListener('mouseup',  () => isDrawing = false);
+  canvas.addEventListener('mouseout',  () => isDrawing = false);
+
+  
+</script>
+
+<style>
+  html, body {
+    margin: 0;
+  }
+</style>
+
+</body>
+</html>
